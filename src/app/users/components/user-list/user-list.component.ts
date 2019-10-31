@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { UserModel } from './../../models/user.model';
-import { UserArrayService } from './../../services/user-array.service';
+import { UserArrayService, UserObservableService } from '../../services';
 
 @Component({
   templateUrl: './user-list.component.html',
@@ -18,13 +18,14 @@ export class UserListComponent implements OnInit {
   private editedUser: UserModel;
 
   constructor(
+    private userObservableService: UserObservableService,
     private userArrayService: UserArrayService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.users$ = this.userArrayService.getUsers();
+    this.users$ = this.userObservableService.getUsers();
 
     // listen editedUserID from UserFormComponent
     const observer = {
