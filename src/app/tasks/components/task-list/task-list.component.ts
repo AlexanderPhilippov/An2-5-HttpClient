@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { TaskModel } from './../../models/task.model';
-import { TaskArrayService } from './../../services/task-array.service';
+import { TaskArrayService, TaskPromiseService } from './../../services/task-promise.service';
 
 @Component({
   templateUrl: './task-list.component.html',
@@ -13,11 +13,11 @@ export class TaskListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private taskArrayService: TaskArrayService
+    private taskPromiseService: TaskPromiseService
   ) {}
 
   ngOnInit() {
-    this.tasks = this.taskArrayService.getTasks();
+    this.tasks = this.taskPromiseService.getTasks();
   }
 
   onCompleteTask(task: TaskModel): void {
@@ -25,8 +25,20 @@ export class TaskListComponent implements OnInit {
     this.taskArrayService.updateTask(updatedTask);
   }
 
+  onCreateTask() {
+    const link = ['/add'];
+    this.router.navigate(link);
+}
+
   onEditTask(task: TaskModel): void {
     const link = ['/edit', task.id];
     this.router.navigate(link);
   }
+  onDeleteTask(task: TaskModel) {
+    this.taskPromiseService
+      .deleteTask(task)
+      .then(() => (this.tasks = this.taskPromiseService.getTasks()))
+      .catch(err => console.log(err));
+  }
+
 }
